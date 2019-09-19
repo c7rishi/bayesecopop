@@ -25,7 +25,7 @@ fit_cyl_mix <- function(data,
     c(angle_col, line_col),
     function(xx) {
       if (!xx %in% names(data)) {
-        stop(glue::glue("data does not have a column named {xx}."))
+        stop(glue::glue("data does not have a column named \'{xx}\'."))
       }
     }
   )
@@ -142,8 +142,10 @@ fit_cyl_mix <- function(data,
     data = dat.stan,
     seed = seed)
 
-  if (!rand_init) {
-    stan_init$init <- lapply(seq(dots$chains), function(x) map)
+  if (!rand_init & sampling_method == "mcmc") {
+    stan_input_pars$init <- lapply(seq(dots$chains), function(x) map)
+  } else if (!rand_init & sampling_method == "vb") {
+    stan_input_pars$init <- map
   }
 
 
@@ -154,6 +156,8 @@ fit_cyl_mix <- function(data,
 
 
   out <- list(init = init,
+              ncomp = ncomp,
+              data = data,
               map = lapply(map, unname),
               stan_map = opt,
               opt_init_type = opt_init_type,

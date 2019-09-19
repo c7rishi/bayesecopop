@@ -2,6 +2,7 @@
 
 export(fit_cyl_mix)
 export(gen_dat)
+export(post_pred_density)
 import(Rcpp)
 import(methods)
 importFrom(glue,glue)

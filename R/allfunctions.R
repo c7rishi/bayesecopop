@@ -632,8 +632,6 @@ surface_plot_lattice <- function(parlist,
                                   nvals = 50,
                                   angle.max = 2*pi,
                                   ...) {
-  `%>%` <- magrittr::`%>%`
-
   dots <- list(...)
   if (is.null(coords)) {
     if (is.null(xpoints)) {

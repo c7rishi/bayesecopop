@@ -29,35 +29,48 @@ fit_vb <- fit_cyl_mix(
   ncomp = 4,
   line_col = "time",
   angle_col = "angle",
-  sampling_method = "vb"
+  sampling_method = "vb",
+  output_samples = 6000
 )
 
-fits <- lapply(2:8,
-               function(j)
-               {
-                 set.seed(100)
-                 cat("\n")
-                 cat("**************************************\n")
-                 cat("ncomp =", j, "\n")
-                 cat("**************************************\n")
-                 fit_mixmod_stanvb(dat_new$dat, ncomp = j)
+# fits <- lapply(2:8,
+#                function(j)
+#                {
+#                  set.seed(100)
+#                  cat("\n")
+#                  cat("**************************************\n")
+#                  cat("ncomp =", j, "\n")
+#                  cat("**************************************\n")
+#                  fit_mixmod_stanvb(dat_new$dat, ncomp = j)
+#
+#                })
+#
+#
+#
+# tmp <- fit_incremental_mixmod(dat_new$dat)
+#
+# fits_stan <- lapply(fits, "[[", "st")
+# fits_map <- lapply(fits, "[[", "init")
 
-               })
+# names(fits_vb) <- names(fits_map) <-
+#   paste("m", 2:8, sep = " = ")
 
 
-
-tmp <- fit_incremental_mixmod(dat_new$dat)
-
-fits_vb <- lapply(fits, "[[", "stan_vb")
-fits_map <- lapply(fits, "[[", "init")
-
-names(fits_vb) <- names(fits_map) <-
-  paste("m", 2:8, sep = " = ")
+mm <- post_pred_density(fit_mcmc, data = dat_new$dat,
+                        line_col = "time")
 
 
 # plot contour by average density from all posterior samples
-contour_plot_stan(fits_vb[[3]], data = dat_new$dat,
-                  alpha = 0.3)
+bayesecopop:::contour_plot_stan(
+  fit_mcmc$stanmodel, data = dat_new$dat,
+  alpha = 0.3)
+
+
+bayesecopop:::contour_plot_stan(
+  fit_vb$stanmodel,
+  data = dat_new$dat,
+  alpha = 0.3)
+
 
 loo_fits <- lapply(fits_vb, loo)
 
