@@ -1,4 +1,7 @@
+#' Bayesian mixture modeling for cylendrical data
 #' @importFrom glue glue
+#' @param data a data frame, with one column providing data on the
+#' angular variable, and one column on the linear variable.
 #' @export
 fit_cyl_mix <- function(data,
                         ncomp = 2,
