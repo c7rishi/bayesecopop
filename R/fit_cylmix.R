@@ -1,14 +1,23 @@
 #' Bayesian mixture modeling for cylendrical data
 #' @importFrom glue glue
 #' @param data a data frame, with one column providing data on the
+#' @param mixture_type either "finite" or "dirichlet
+#' @param overfit either "super-impose" or "leave-empty". Ignored if
+#' mixture_type = "dirichlet".
 #' angular variable, and one column on the linear variable.
 #' @export
 fit_cyl_mix <- function(data,
-                        ncomp = 2,
+                        mixture_type = "finite",
                         overfit = "super-impose",
+                        ncomp = ifelse(mixture_type == "finite" &
+                                         overfit == "super-impose",
+                                       2, 10),
                         seed = 1,
                         sampling_method = "mcmc",
                         init_opt = NULL,
+                        alpha0_dirichlet = 1,
+                        alpha0_finite = ifelse(overfit == "super-impose",
+                                               5.5, 0.001),
                         angle_col = "angle",
                         line_col = "line",
                         rand_init = (sampling_method == "mcmc"),
@@ -18,6 +27,10 @@ fit_cyl_mix <- function(data,
 
   if (!overfit %in% c("super-impose", "leave-empty")) {
     stop("overfit must be either \'super-impose\' or \'leave-empty\'")
+  }
+
+  if (!mixture_type %in% c("finite", "dirichlet")) {
+    stop("mixture_type must be either \'finite\' or \'dirichlet\'")
   }
 
   if (!sampling_method %in% c("mcmc", "vb")) {
@@ -36,11 +49,17 @@ fit_cyl_mix <- function(data,
   data <- data[c(line_col, angle_col)]
 
 
-  if (show_allocation) {
+  if (show_allocation & mixture_type == "finite") {
     stan_mix_model <- stanmodels$mixture_w_allocation
-  } else {
+  } else if (show_allocation & mixture_type == "dirichlet") {
+    stan_mix_model <- stanmodels$mixture_dirichlet_w_allocation
+  } else if (!show_allocation & mixture_type == "finite") {
     stan_mix_model <- stanmodels$mixture
+  } else {
+    # !show_allocation & mixture_type == "dirichelt"
+    stan_mix_model <- stanmodels$mixture_dirichlet
   }
+
 
   if (sampling_method == "mcmc") {
     stan_sampling <- rstan::sampling
@@ -49,12 +68,12 @@ fit_cyl_mix <- function(data,
   }
 
 
-  alpha0 <- ifelse(overfit == "super-impose", 5.5, 0.01)
 
   dat.stan <- list(y = data.matrix(data),
                    n_data = nrow(data),
                    n_groups = ncomp,
-                   alpha = rep(alpha0, ncomp))
+                   alpha = rep(alpha0_finite, ncomp),
+                   alpha0 = alpha0_dirichlet)
 
 
   init <- init1 <- init_kmeans(data, ncomp)
@@ -132,9 +151,16 @@ fit_cyl_mix <- function(data,
 
   dots <- list(...)
 
-  if (is.null(dots$algorithm) & sampling_method == "vb") {
-    dots$algorithm <- 'fullrank'
+  if (sampling_method == "vb") {
+    if (is.null(dots$algorithm)) {
+      dots$algorithm <- 'fullrank'
+    }
+
+    if (is.null(dots$output_samples)) {
+      dots$output_samples <- 10000
+    }
   }
+
 
   if (is.null(dots$chains) & sampling_method == "mcmc") {
     dots$chains <- 4

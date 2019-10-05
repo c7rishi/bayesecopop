@@ -8,10 +8,14 @@ using namespace Rcpp;
 
 
 RcppExport SEXP _rcpp_module_boot_stan_fit4mixture_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4mixture_dirichlet_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4mixture_dirichlet_w_allocation_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4mixture_w_allocation_mod();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4mixture_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4mixture_mod, 0},
+    {"_rcpp_module_boot_stan_fit4mixture_dirichlet_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4mixture_dirichlet_mod, 0},
+    {"_rcpp_module_boot_stan_fit4mixture_dirichlet_w_allocation_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4mixture_dirichlet_w_allocation_mod, 0},
     {"_rcpp_module_boot_stan_fit4mixture_w_allocation_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4mixture_w_allocation_mod, 0},
     {NULL, NULL, 0}
 };

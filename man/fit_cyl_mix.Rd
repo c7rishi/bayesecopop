@@ -4,13 +4,21 @@
 \alias{fit_cyl_mix}
 \title{Bayesian mixture modeling for cylendrical data}
 \usage{
-fit_cyl_mix(data, ncomp = 2, overfit = "super-impose", seed = 1,
-  sampling_method = "mcmc", init_opt = NULL, angle_col = "angle",
-  line_col = "line", rand_init = (sampling_method == "mcmc"),
-  show_allocation = FALSE, ...)
+fit_cyl_mix(data, mixture_type = "finite", overfit = "super-impose",
+  ncomp = ifelse(mixture_type == "finite" & overfit == "super-impose", 2,
+  10), seed = 1, sampling_method = "mcmc", init_opt = NULL,
+  alpha0_dirichlet = 1, alpha0_finite = ifelse(overfit ==
+  "super-impose", 5.5, 0.001), angle_col = "angle", line_col = "line",
+  rand_init = (sampling_method == "mcmc"), show_allocation = FALSE,
+  ...)
 }
 \arguments{
-\item{data}{a data frame, with one column providing data on the
+\item{data}{a data frame, with one column providing data on the}
+
+\item{mixture_type}{either "finite" or "dirichlet}
+
+\item{overfit}{either "super-impose" or "leave-empty". Ignored if
+mixture_type = "dirichlet".
 angular variable, and one column on the linear variable.}
 }
 \description{
