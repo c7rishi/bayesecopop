@@ -1,5 +1,12 @@
+table_fast <- function(x) {
+  tmp <- rle(sort(x))
+  out <- tmp$length
+  names(out) <- tmp$values
+  out
+}
+
 #' @export
-estimate_ncomp <- function(object, return_random_compsize = FALSE) {
+estimate_nonempty_ncomp <- function(object, return_random_compsize = FALSE) {
   nsamp <- nrow(object$data)
   pmix_samps <- rstan::extract(object$stanmodel, pars = "pmix")$pmix
   rand_comp_sizes <- t(
@@ -12,7 +19,7 @@ estimate_ncomp <- function(object, return_random_compsize = FALSE) {
     )
   )
   rand_ncomps <- apply(rand_comp_sizes, 1, function(x) sum(x > 0))
-  est_ncomp <- as.integer(names(which.max(table(rand_ncomps))))
+  est_ncomp <- as.integer(names(which.max(table_fast(rand_ncomps))))
 
   if (return_random_compsize) {
     attr(est_ncomp, "rand_compsize") <- rand_comp_sizes

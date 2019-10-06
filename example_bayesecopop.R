@@ -14,13 +14,6 @@ bayesecopop:::contour_plot_singlepar(dat_new$dat,
 
 dd <- dat_new$dat
 
-fit_mcmc <- fit_cyl_mix(
-  dd,
-  ncomp = 4,
-  line_col = "time",
-  angle_col = "angle",
-  sampling_method = "mcmc"
-)
 
 fit_vb_finite <- fit_cyl_mix(
   dd,
@@ -62,7 +55,17 @@ fit_mcmc_finite_sparse <- fit_cyl_mix(
   sampling_method = "mcmc"
 )
 
-estimate_ncomp(fit_mcmc_finite_sparse)
+fit_mcmc <- fit_cyl_mix(
+  dd,
+  ncomp = 4,
+  line_col = "time",
+  angle_col = "angle",
+  sampling_method = "mcmc"
+)
+
+
+
+estimate_nonempty_ncomp(fit_mcmc_finite_sparse)
 
 
 
