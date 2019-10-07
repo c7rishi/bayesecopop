@@ -7,7 +7,6 @@ data {
   int n_data; //number of data points
   real y[n_data, 2]; //data
   vector[n_groups] alpha;
-  real<lower=0> period_over_2pi;
 }
 
 
@@ -41,17 +40,16 @@ model {
       if (kappa[k] < 100) {
         contributions[k] = log(pmix[k]) +
           normal_lpdf(y[i, 1] | mu[k], sigma[k]) +
-          von_mises_lpdf(y[i, 2]/period_over_2pi | nu[k], kappa[k]);
+          von_mises_lpdf(y[i, 2] | nu[k], kappa[k]);
       } else {
         // for stability, when kappa is large,
         // use normal distribution
         contributions[k] = log(pmix[k]) +
           normal_lpdf(y[i, 1] | mu[k], sigma[k]) +
-          normal_lpdf(y[i, 2]/period_over_2pi | nu[k], 1/sqrt(kappa[k]));
+          normal_lpdf(y[i, 2] | nu[k], 1/sqrt(kappa[k]));
       }
     }
     target += log_sum_exp(contributions);
-    // log jacobian unnecessary since just a scale transform
   }
 }
 

@@ -33,7 +33,7 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_mixture");
-    reader.add_event(81, 79, "end", "model_mixture");
+    reader.add_event(79, 77, "end", "model_mixture");
     return reader;
 }
 #include <stan_meta_header.hpp>
@@ -43,7 +43,6 @@ private:
     int n_data;
     vector<vector<double> > y;
     vector_d alpha;
-    double period_over_2pi;
 public:
     model_mixture(stan::io::var_context& context__,
         std::ostream* pstream__ = 0)
@@ -113,37 +112,29 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < alpha_i_vec_lim__; ++i_vec__) {
                 alpha[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 10;
-            context__.validate_dims("data initialization", "period_over_2pi", "double", context__.to_vec());
-            period_over_2pi = double(0);
-            vals_r__ = context__.vals_r("period_over_2pi");
-            pos__ = 0;
-            period_over_2pi = vals_r__[pos__++];
             // validate, data variables
             current_statement_begin__ = 6;
             current_statement_begin__ = 7;
             current_statement_begin__ = 8;
             current_statement_begin__ = 9;
-            current_statement_begin__ = 10;
-            check_greater_or_equal(function__,"period_over_2pi",period_over_2pi,0);
             // initialize data variables
             // validate transformed data
             // validate, set parameter ranges
             num_params_r__ = 0U;
             param_ranges_i__.clear();
-            current_statement_begin__ = 16;
+            current_statement_begin__ = 15;
             validate_non_negative_index("mu", "n_groups", n_groups);
             num_params_r__ += n_groups;
-            current_statement_begin__ = 17;
+            current_statement_begin__ = 16;
             validate_non_negative_index("sigma", "n_groups", n_groups);
             num_params_r__ += n_groups;
-            current_statement_begin__ = 19;
+            current_statement_begin__ = 18;
             validate_non_negative_index("nu", "n_groups", n_groups);
             num_params_r__ += n_groups;
-            current_statement_begin__ = 20;
+            current_statement_begin__ = 19;
             validate_non_negative_index("kappa", "n_groups", n_groups);
             num_params_r__ += n_groups;
-            current_statement_begin__ = 22;
+            current_statement_begin__ = 21;
             validate_non_negative_index("pmix", "n_groups", n_groups);
             num_params_r__ += (n_groups - 1);
         } catch (const std::exception& e) {
@@ -309,41 +300,41 @@ public:
             (void) function__;  // dummy to suppress unused var warning
             // model body
             {
-            current_statement_begin__ = 26;
+            current_statement_begin__ = 25;
             validate_non_negative_index("contributions", "n_groups", n_groups);
             vector<local_scalar_t__> contributions(n_groups);
             stan::math::initialize(contributions, DUMMY_VAR__);
             stan::math::fill(contributions,DUMMY_VAR__);
-            current_statement_begin__ = 29;
+            current_statement_begin__ = 28;
             lp_accum__.add(cauchy_log<propto__>(mu, 0, 10));
-            current_statement_begin__ = 30;
+            current_statement_begin__ = 29;
             lp_accum__.add(cauchy_log<propto__>(sigma, 0, 10));
-            current_statement_begin__ = 32;
+            current_statement_begin__ = 31;
             lp_accum__.add(cauchy_log<propto__>(nu, 0, 10));
-            current_statement_begin__ = 33;
+            current_statement_begin__ = 32;
             lp_accum__.add(cauchy_log<propto__>(kappa, 0, 10));
-            current_statement_begin__ = 35;
+            current_statement_begin__ = 34;
             lp_accum__.add(dirichlet_log<propto__>(pmix, alpha));
-            current_statement_begin__ = 39;
+            current_statement_begin__ = 38;
             for (int i = 1; i <= n_data; ++i) {
-                current_statement_begin__ = 40;
+                current_statement_begin__ = 39;
                 for (int k = 1; k <= n_groups; ++k) {
-                    current_statement_begin__ = 41;
+                    current_statement_begin__ = 40;
                     if (as_bool(logical_lt(get_base1(kappa,k,"kappa",1),100))) {
-                        current_statement_begin__ = 42;
+                        current_statement_begin__ = 41;
                         stan::model::assign(contributions, 
                                     stan::model::cons_list(stan::model::index_uni(k), stan::model::nil_index_list()), 
-                                    ((stan::math::log(get_base1(pmix,k,"pmix",1)) + normal_log(get_base1(get_base1(y,i,"y",1),1,"y",2),get_base1(mu,k,"mu",1),get_base1(sigma,k,"sigma",1))) + von_mises_log((get_base1(get_base1(y,i,"y",1),2,"y",2) / period_over_2pi),get_base1(nu,k,"nu",1),get_base1(kappa,k,"kappa",1))), 
+                                    ((stan::math::log(get_base1(pmix,k,"pmix",1)) + normal_log(get_base1(get_base1(y,i,"y",1),1,"y",2),get_base1(mu,k,"mu",1),get_base1(sigma,k,"sigma",1))) + von_mises_log(get_base1(get_base1(y,i,"y",1),2,"y",2),get_base1(nu,k,"nu",1),get_base1(kappa,k,"kappa",1))), 
                                     "assigning variable contributions");
                     } else {
-                        current_statement_begin__ = 48;
+                        current_statement_begin__ = 47;
                         stan::model::assign(contributions, 
                                     stan::model::cons_list(stan::model::index_uni(k), stan::model::nil_index_list()), 
-                                    ((stan::math::log(get_base1(pmix,k,"pmix",1)) + normal_log(get_base1(get_base1(y,i,"y",1),1,"y",2),get_base1(mu,k,"mu",1),get_base1(sigma,k,"sigma",1))) + normal_log((get_base1(get_base1(y,i,"y",1),2,"y",2) / period_over_2pi),get_base1(nu,k,"nu",1),(1 / stan::math::sqrt(get_base1(kappa,k,"kappa",1))))), 
+                                    ((stan::math::log(get_base1(pmix,k,"pmix",1)) + normal_log(get_base1(get_base1(y,i,"y",1),1,"y",2),get_base1(mu,k,"mu",1),get_base1(sigma,k,"sigma",1))) + normal_log(get_base1(get_base1(y,i,"y",1),2,"y",2),get_base1(nu,k,"nu",1),(1 / stan::math::sqrt(get_base1(kappa,k,"kappa",1))))), 
                                     "assigning variable contributions");
                     }
                 }
-                current_statement_begin__ = 53;
+                current_statement_begin__ = 52;
                 lp_accum__.add(log_sum_exp(contributions));
             }
             }
@@ -463,44 +454,44 @@ public:
             }
             if (!include_gqs__) return;
             // declare and define generated quantities
-            current_statement_begin__ = 60;
+            current_statement_begin__ = 58;
             validate_non_negative_index("log_lik", "n_data", n_data);
             vector<local_scalar_t__> log_lik(n_data);
             stan::math::initialize(log_lik, DUMMY_VAR__);
             stan::math::fill(log_lik,DUMMY_VAR__);
-            current_statement_begin__ = 61;
+            current_statement_begin__ = 59;
             validate_non_negative_index("contributions", "n_groups", n_groups);
             vector<local_scalar_t__> contributions(n_groups);
             stan::math::initialize(contributions, DUMMY_VAR__);
             stan::math::fill(contributions,DUMMY_VAR__);
-            current_statement_begin__ = 65;
+            current_statement_begin__ = 63;
             for (int i = 1; i <= n_data; ++i) {
-                current_statement_begin__ = 66;
+                current_statement_begin__ = 64;
                 for (int k = 1; k <= n_groups; ++k) {
-                    current_statement_begin__ = 67;
+                    current_statement_begin__ = 65;
                     if (as_bool(logical_lt(get_base1(kappa,k,"kappa",1),100))) {
-                        current_statement_begin__ = 68;
+                        current_statement_begin__ = 66;
                         stan::model::assign(contributions, 
                                     stan::model::cons_list(stan::model::index_uni(k), stan::model::nil_index_list()), 
                                     ((stan::math::log(get_base1(pmix,k,"pmix",1)) + normal_log(get_base1(get_base1(y,i,"y",1),1,"y",2),get_base1(mu,k,"mu",1),get_base1(sigma,k,"sigma",1))) + von_mises_log(get_base1(get_base1(y,i,"y",1),2,"y",2),get_base1(nu,k,"nu",1),get_base1(kappa,k,"kappa",1))), 
                                     "assigning variable contributions");
                     } else {
-                        current_statement_begin__ = 72;
+                        current_statement_begin__ = 70;
                         stan::model::assign(contributions, 
                                     stan::model::cons_list(stan::model::index_uni(k), stan::model::nil_index_list()), 
                                     ((stan::math::log(get_base1(pmix,k,"pmix",1)) + normal_log(get_base1(get_base1(y,i,"y",1),1,"y",2),get_base1(mu,k,"mu",1),get_base1(sigma,k,"sigma",1))) + normal_log(get_base1(get_base1(y,i,"y",1),2,"y",2),get_base1(nu,k,"nu",1),(1 / stan::math::sqrt(get_base1(kappa,k,"kappa",1))))), 
                                     "assigning variable contributions");
                     }
                 }
-                current_statement_begin__ = 77;
+                current_statement_begin__ = 75;
                 stan::model::assign(log_lik, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             log_sum_exp(contributions), 
                             "assigning variable log_lik");
             }
             // validate generated quantities
-            current_statement_begin__ = 60;
-            current_statement_begin__ = 61;
+            current_statement_begin__ = 58;
+            current_statement_begin__ = 59;
             // write generated quantities
             for (int k_0__ = 0; k_0__ < n_data; ++k_0__) {
             vars__.push_back(log_lik[k_0__]);

@@ -47,7 +47,10 @@ fit_cyl_mix <- function(data,
     }
   )
 
-  data <- data[c(line_col, angle_col)]
+  data1 <- data <- data[c(line_col, angle_col)]
+
+  # adjust the angle column with respect to the period
+  data1[[angle_col]] <- data1[[angle_col]] * (2*pi)/angle_period
 
 
   if (show_allocation & mixture_type == "finite") {
@@ -70,12 +73,11 @@ fit_cyl_mix <- function(data,
 
 
 
-  dat.stan <- list(y = data.matrix(data),
-                   n_data = nrow(data),
+  dat.stan <- list(y = data.matrix(data1),
+                   n_data = nrow(data1),
                    n_groups = ncomp,
                    alpha = rep(alpha0_finite, ncomp),
-                   alpha0 = alpha0_dirichlet,
-                   period_over_2pi = angle_period/(2*pi))
+                   alpha0 = alpha0_dirichlet)
 
 
   init <- init1 <- init_kmeans(data, ncomp)
@@ -189,6 +191,7 @@ fit_cyl_mix <- function(data,
   out <- list(init = init,
               ncomp = ncomp,
               data = data,
+              angle_period = angle_period,
               map = lapply(map, unname),
               stan_map = opt,
               opt_init_type = opt_init_type,

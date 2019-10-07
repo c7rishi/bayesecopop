@@ -15,49 +15,51 @@ bayesecopop:::contour_plot_singlepar(dat_new$dat,
 dd <- dat_new$dat
 
 
-fit_vb_finite <- fit_cyl_mix(
-  dd,
-  ncomp = 4,
-  line_col = "time",
-  angle_col = "angle",
-  sampling_method = "vb",
-  output_samples = 5000
-)
+# fit_vb_finite <- fit_cyl_mix(
+#   dd,
+#   ncomp = 4,
+#   line_col = "time",
+#   angle_col = "angle",
+#   sampling_method = "vb",
+#   output_samples = 5000
+# )
 
 fit_vb_dirichlet <- fit_cyl_mix(
   dd,
   mixture_type = "dirichlet",
+  ncomp = 6,
   line_col = "time",
   angle_col = "angle",
   sampling_method = "vb",
   output_samples = 1000,
 )
-estimate_ncomp(fit_vb_dirichlet)
+estimate_nonempty_ncomp(fit_vb_dirichlet)
 
 
-fit_vb_finite_sparse <- fit_cyl_mix(
-  dd,
-  mixture_type = "finite",
-  overfit = "leave-empty",
-  line_col = "time",
-  angle_col = "angle",
-  alpha0_finite =  1e-6,
-  sampling_method = "vb",
-  output_samples = 5000
-)
-fit_mcmc_finite_sparse <- fit_cyl_mix(
-  dd,
-  mixture_type = "finite",
-  overfit = "leave-empty",
-  line_col = "time",
-  angle_col = "angle",
-  alpha0_finite =  1e-6,
-  sampling_method = "mcmc"
-)
+# fit_vb_finite_sparse <- fit_cyl_mix(
+#   dd,
+#   mixture_type = "finite",
+#   overfit = "leave-empty",
+#   line_col = "time",
+#   angle_col = "angle",
+#   alpha0_finite =  1e-6,
+#   sampling_method = "vb",
+#   output_samples = 5000
+# )
+# fit_mcmc_finite_sparse <- fit_cyl_mix(
+#   dd,
+#   mixture_type = "finite",
+#   overfit = "leave-empty",
+#   line_col = "time",
+#   angle_col = "angle",
+#   alpha0_finite =  1e-6,
+#   sampling_method = "mcmc"
+# )
 
-fit_mcmc <- fit_cyl_mix(
+fit_mcmc_dirichlet <- fit_cyl_mix(
   dd,
-  ncomp = 4,
+  mixture_type = "dirichlet",
+  ncomp = 6,
   line_col = "time",
   angle_col = "angle",
   sampling_method = "mcmc"

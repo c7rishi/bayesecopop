@@ -6,7 +6,6 @@ data {
   int n_data; //number of data points
   real y[n_data, 2]; //data
   real<lower=0> alpha0;
-  real<lower=0> period_over_2pi;
 }
 
 parameters {
@@ -16,17 +15,23 @@ parameters {
   real nu[n_groups];
   real<lower = 0> kappa[n_groups];
 
-  real <lower=0,upper=1> v[n_groups]; // stick breaking v
+  real<lower=0,upper=1> v_raw[n_groups-1]; // stick breaking v
 }
 
 transformed parameters{
-  simplex [n_groups] pmix;
-  pmix[1] = v[1];
+  simplex[n_groups] pmix;
+  vector[n_groups] pmix_raw;
+  real<lower=0,upper=1> v[n_groups];
+
+  v[1:(n_groups-1)] = v_raw[:];
+  v[n_groups] = 1;
+
+  pmix_raw[1] = v[1];
   // stick-break process based on The BUGS book Chapter 11 (p.294)
-  for(j in 2:(n_groups-1)){
-      pmix[j] = v[j]*(1-v[j-1]) * pmix[j-1]/v[j-1];
+  for(j in 2:n_groups){
+      pmix_raw[j] = v[j]*(1-v[j-1]) * pmix_raw[j-1]/v[j-1];
   }
-  pmix[n_groups]=1-sum(pmix[1:(n_groups-1)]); // to make a simplex.
+  pmix = pmix_raw/sum(pmix_raw[:]); // to make a simplex.
 }
 
 model {
@@ -39,7 +44,7 @@ model {
   nu ~ cauchy(0, 10);
   kappa ~ cauchy(0, 10);
 
-  v ~ beta(1, alpha0);
+  v_raw ~ beta(1, alpha0);
 
 
   // likelihood
@@ -48,13 +53,13 @@ model {
          if (kappa[k] < 100) {
         contributions[k] = log(pmix[k]) +
           normal_lpdf(y[i, 1] | mu[k], sigma[k]) +
-          von_mises_lpdf(y[i, 2]/period_over_2pi | nu[k], kappa[k]);
+          von_mises_lpdf(y[i, 2] | nu[k], kappa[k]);
       } else {
         // for stability, when kappa is large,
         // use normal distribution
         contributions[k] = log(pmix[k]) +
           normal_lpdf(y[i, 1] | mu[k], sigma[k]) +
-          normal_lpdf(y[i, 2]/period_over_2pi | nu[k], 1/sqrt(kappa[k]));
+          normal_lpdf(y[i, 2] | nu[k], 1/sqrt(kappa[k]));
       }
     }
     target += log_sum_exp(contributions);
