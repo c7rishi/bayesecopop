@@ -20,6 +20,7 @@ fit_cyl_mix <- function(data,
                                                5.5, 0.001),
                         angle_col = "angle",
                         line_col = "line",
+                        angle_period = 2*pi,
                         rand_init = (sampling_method == "mcmc"),
                         show_allocation = FALSE,
                         ...)
@@ -73,7 +74,8 @@ fit_cyl_mix <- function(data,
                    n_data = nrow(data),
                    n_groups = ncomp,
                    alpha = rep(alpha0_finite, ncomp),
-                   alpha0 = alpha0_dirichlet)
+                   alpha0 = alpha0_dirichlet,
+                   period_over_2pi = angle_period/(2*pi))
 
 
   init <- init1 <- init_kmeans(data, ncomp)

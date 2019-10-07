@@ -9,8 +9,8 @@ fit_cyl_mix(data, mixture_type = "finite", overfit = "super-impose",
   10), seed = 1, sampling_method = "mcmc", init_opt = NULL,
   alpha0_dirichlet = 1, alpha0_finite = ifelse(overfit ==
   "super-impose", 5.5, 0.001), angle_col = "angle", line_col = "line",
-  rand_init = (sampling_method == "mcmc"), show_allocation = FALSE,
-  ...)
+  angle_period = 2 * pi, rand_init = (sampling_method == "mcmc"),
+  show_allocation = FALSE, ...)
 }
 \arguments{
 \item{data}{a data frame, with one column providing data on the}
