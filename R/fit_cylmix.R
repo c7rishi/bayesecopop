@@ -202,3 +202,9 @@ fit_cyl_mix <- function(data,
   class(out) <- "cylmix"
   out
 }
+
+
+#' @export
+is.cylmix <- function(x) {
+  is(x, "cylmix")
+}
