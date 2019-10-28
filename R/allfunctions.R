@@ -940,50 +940,6 @@ overlay_surface_plotly <- function(parlists, data, ...) {
 
 
 
-# computes Jensen-Shannon distance
-# (in [0, 1]) scale, with permutation
-# p-values
-.JS_pp_df <- function(pp_df_list,
-                      mod1_dens_cols,
-                      n_mod1_dens_cols,
-                      n_mod2_dens_cols,
-                      full_col_sum,
-                      mod_names_vec,
-                      rand_swap = FALSE) {
-  if (rand_swap) {
-    mod1_dens_cols <- sample(1:(n_mod1_dens_cols+n_mod1_dens_cols),
-                             n_mod1_dens_cols)
-    mod_names_vec <- sample(mod_names_vec)
-  }
-
-
-  tmp_sum <- Reduce(
-    "+",
-    pp_df_list[mod1_dens_cols]
-  )
-
-  den_mod1 <- tmp_sum/n_mod1_dens_cols
-  den_mod2 <- (full_col_sum - tmp_sum)/n_mod2_dens_cols
-
-  mod1_indic <- mod_names_vec == "mod1"
-  den_curr <- ifelse(mod1_indic,
-                     den_mod1, den_mod2)
-  den_half <- (den_mod1 + den_mod2)/2
-  log_den_diff <- log(den_curr) - log(den_half)
-
-  mod1_idx <- which(mod1_indic)
-  KL_mod_to_half <- list(log_den_diff[mod1_idx],
-                         log_den_diff[-mod1_idx]) %>%
-    lapply(mean) %>%
-    unlist()
-
-  JS <- sum(pmax(KL_mod_to_half, 0))/2
-
-  sqrt(JS/log(2))
-
-}
-
-
 
 # # # randomly interchange model labels (1 & 2's)
 # # .rand_swap_mod_samps <- function(pp_df) {
