@@ -12,10 +12,8 @@ CXX11FLAGS=-O3 -march=native -mtune=native
 PKG_LIBS = $(SHLIB_OPENMP_CFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 ```
 
-Then run
+Then install bayesecopop using `devtools`:
 ```
-devtools::install_github(
-  "c7rishi/bayesecopop",
-  auth_token = "2e3ff8f12251e40ab2c6cab4942745ef0d52363d"
-)
+# install.packages("devtools")
+devtools::install_github("c7rishi/bayesecopop")
 ```
